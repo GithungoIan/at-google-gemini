@@ -1,0 +1,81 @@
+version: '3.8'
+
+services:
+  # VoiceAI Application
+  voiceai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - PORT=8080
+      - INTERFACE=0.0.0.0
+      - ENVIRONMENT=development
+      - AT_API_KEY=${AT_API_KEY}
+      - AT_USERNAME=${AT_USERNAME}
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    depends_on:
+      - prometheus
+      - grafana
+    networks:
+      - voiceai-network
+    restart: unless-stopped
+
+  # Prometheus for metrics
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - ./alerts.yml:/etc/prometheus/alerts.yml
+      - prometheus-data:/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    networks:
+      - voiceai-network
+    restart: unless-stopped
+
+  # Grafana for visualization
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+    depends_on:
+      - prometheus
+    networks:
+      - voiceai-network
+    restart: unless-stopped
+
+  # Node Exporter for system metrics (optional)
+  node-exporter:
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
+    command:
+      - '--path.rootfs=/host'
+    volumes:
+      - '/:/host:ro,rslave'
+    networks:
+      - voiceai-network
+    restart: unless-stopped
+
+networks:
+  voiceai-network:
+    driver: bridge
+
+volumes:
+  prometheus-data:
+  grafana-data:

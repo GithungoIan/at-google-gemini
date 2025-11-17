@@ -1,0 +1,114 @@
+# Prometheus Alert Rules for VoiceAI
+
+groups:
+  - name: voiceai_alerts
+    interval: 30s
+    rules:
+      # High error rate alert
+      - alert: HighErrorRate
+        expr: |
+          (
+            rate(voiceai_calls_total{status="failed"}[5m]) /
+            rate(voiceai_calls_total[5m])
+          ) > 0.05
+        for: 5m
+        labels:
+          severity: warning
+          service: voiceai
+        annotations:
+          summary: "High error rate detected"
+          description: "Call failure rate is {{ $value | humanizePercentage }} over the last 5 minutes"
+
+      # Gemini API down
+      - alert: GeminiAPIDown
+        expr: |
+          (
+            rate(voiceai_gemini_api_calls_total{status="failure"}[5m]) /
+            rate(voiceai_gemini_api_calls_total[5m])
+          ) > 0.5
+        for: 2m
+        labels:
+          severity: critical
+          service: voiceai
+        annotations:
+          summary: "Gemini API experiencing high failure rate"
+          description: "Gemini API failure rate is {{ $value | humanizePercentage }}"
+
+      # High call duration
+      - alert: HighCallDuration
+        expr: |
+          histogram_quantile(0.95,
+            rate(voiceai_call_duration_seconds_bucket[10m])
+          ) > 120
+        for: 10m
+        labels:
+          severity: warning
+          service: voiceai
+        annotations:
+          summary: "95th percentile call duration exceeds 2 minutes"
+          description: "95th percentile call duration is {{ $value }}s"
+
+      # Service down
+      - alert: ServiceDown
+        expr: up{job="voiceai"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: voiceai
+        annotations:
+          summary: "VoiceAI service is down"
+          description: "VoiceAI service has been down for more than 1 minute"
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: |
+          (
+            process_resident_memory_bytes{job="voiceai"} /
+            process_virtual_memory_max_bytes{job="voiceai"}
+          ) > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: voiceai
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is at {{ $value | humanizePercentage }}"
+
+      # Too many active calls
+      - alert: TooManyActiveCalls
+        expr: voiceai_active_calls > 100
+        for: 5m
+        labels:
+          severity: warning
+          service: voiceai
+        annotations:
+          summary: "High number of active calls"
+          description: "{{ $value }} active calls detected"
+
+      # SMS processing slow
+      - alert: SlowSMSProcessing
+        expr: |
+          histogram_quantile(0.95,
+            rate(voiceai_sms_processing_seconds_bucket[5m])
+          ) > 5
+        for: 10m
+        labels:
+          severity: warning
+          service: voiceai
+        annotations:
+          summary: "SMS processing is slow"
+          description: "95th percentile SMS processing time is {{ $value }}s"
+
+      # Gemini API latency high
+      - alert: HighGeminiLatency
+        expr: |
+          histogram_quantile(0.95,
+            rate(voiceai_gemini_api_latency_seconds_bucket[5m])
+          ) > 3
+        for: 5m
+        labels:
+          severity: warning
+          service: voiceai
+        annotations:
+          summary: "High Gemini API latency"
+          description: "95th percentile Gemini API latency is {{ $value }}s"

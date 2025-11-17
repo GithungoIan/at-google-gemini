@@ -1,0 +1,10 @@
+target/
+project/target/
+project/project/
+.git/
+.idea/
+*.log
+.DS_Store
+.bsp/
+*.iml
+scripts/

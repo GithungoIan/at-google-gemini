@@ -1,0 +1,54 @@
+# Prometheus Configuration for VoiceAI
+
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+  external_labels:
+    cluster: 'voiceai-production'
+    replica: '1'
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+            - 'alertmanager:9093'
+
+# Load rules once and periodically evaluate them
+rule_files:
+  - 'alerts.yml'
+
+# Scrape configurations
+scrape_configs:
+  # VoiceAI application metrics
+  - job_name: 'voiceai'
+    metrics_path: '/metrics'
+    static_configs:
+      - targets: ['localhost:8080']
+        labels:
+          service: 'voiceai'
+          environment: 'production'
+
+    # Relabeling
+    relabel_configs:
+      - source_labels: [__address__]
+        target_label: instance
+      - source_labels: [__scheme__]
+        target_label: scheme
+
+  # Prometheus itself
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # Node exporter (system metrics)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+# Remote write configuration (optional - for long-term storage)
+# remote_write:
+#   - url: 'https://prometheus-remote-write-endpoint/api/v1/write'
+#     basic_auth:
+#       username: 'your-username'
+#       password: 'your-password'

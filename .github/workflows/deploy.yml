@@ -1,0 +1,82 @@
+name: Deploy to Cloud Run
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+env:
+  PROJECT_ID: ${{ secrets.GCP_PROJECT_ID }}
+  SERVICE_NAME: voiceai-service
+  REGION: us-central1
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+          cache: 'sbt'
+
+      - name: Run tests
+        run: sbt test
+
+      - name: Check code formatting
+        run: sbt scalafmtCheck
+
+  deploy:
+    needs: test
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Set up Cloud SDK
+        uses: google-github-actions/setup-gcloud@v1
+
+      - name: Configure Docker
+        run: gcloud auth configure-docker
+
+      - name: Build Docker image
+        run: docker build -t gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA .
+
+      - name: Push to GCR
+        run: docker push gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy $SERVICE_NAME \
+            --image gcr.io/$PROJECT_ID/$SERVICE_NAME:$GITHUB_SHA \
+            --platform managed \
+            --region $REGION \
+            --allow-unauthenticated \
+            --memory 1Gi \
+            --cpu 2 \
+            --min-instances 1 \
+            --max-instances 100 \
+            --set-env-vars "ENVIRONMENT=production" \
+            --set-secrets "AT_API_KEY=at-api-key:latest,AT_USERNAME=at-username:latest,GEMINI_API_KEY=gemini-api-key:latest"
+
+      - name: Verify deployment
+        run: |
+          URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --format 'value(status.url)')
+          echo "Service URL: $URL"
+          curl -f $URL/admin/health || exit 1
+
+      - name: Update webhook URLs
+        run: |
+          URL=$(gcloud run services describe $SERVICE_NAME --region $REGION --format 'value(status.url)')
+          echo "Voice webhook: $URL/webhooks/voice/events"
+          echo "SMS webhook: $URL/webhooks/sms/incoming"
