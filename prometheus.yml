@@ -1,10 +1,10 @@
-# Prometheus Configuration for VoiceAI
+# Prometheus Configuration for at-google-gemini
 
 global:
   scrape_interval: 15s
   evaluation_interval: 15s
   external_labels:
-    cluster: 'voiceai-production'
+    cluster: 'at-google-gemini-production'
     replica: '1'
 
 # Alertmanager configuration
@@ -20,13 +20,13 @@ rule_files:
 
 # Scrape configurations
 scrape_configs:
-  # VoiceAI application metrics
-  - job_name: 'voiceai'
+  # at-google-gemini application metrics
+  - job_name: 'at-google-gemini'
     metrics_path: '/metrics'
     static_configs:
       - targets: ['localhost:8080']
         labels:
-          service: 'voiceai'
+          service: 'at-google-gemini'
           environment: 'production'
 
     # Relabeling

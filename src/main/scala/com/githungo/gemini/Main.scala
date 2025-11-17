@@ -79,7 +79,7 @@ object Main extends App {
         case Success(binding) =>
           val address = binding.localAddress
           context.log.info(
-            s"VoiceAI service started at http://${address.getHostString}:${address.getPort}/"
+            s"at-google-gemini service started at http://${address.getHostString}:${address.getPort}/"
           )
           context.log.info(s"Environment: ${sys.env.getOrElse("ENVIRONMENT", "development")}")
           context.log.info(s"")
@@ -102,7 +102,7 @@ object Main extends App {
 
       // Register shutdown hook
       sys.addShutdownHook {
-        context.log.info("Shutting down VoiceAI service...")
+        context.log.info("Shutting down at-google-gemini service...")
         bindingFuture
           .flatMap(_.unbind())
           .onComplete(_ => system.terminate())

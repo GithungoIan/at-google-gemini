@@ -1,7 +1,7 @@
 apiVersion: 1
 
 providers:
-  - name: 'VoiceAI Dashboards'
+  - name: 'at-google-gemini Dashboards'
     orgId: 1
     folder: ''
     type: file

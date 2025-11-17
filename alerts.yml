@@ -1,4 +1,4 @@
-# Prometheus Alert Rules for VoiceAI
+# Prometheus Alert Rules for at-google-gemini
 
 groups:
   - name: voiceai_alerts
@@ -14,7 +14,7 @@ groups:
         for: 5m
         labels:
           severity: warning
-          service: voiceai
+          service: at-google-gemini
         annotations:
           summary: "High error rate detected"
           description: "Call failure rate is {{ $value | humanizePercentage }} over the last 5 minutes"
@@ -29,7 +29,7 @@ groups:
         for: 2m
         labels:
           severity: critical
-          service: voiceai
+          service: at-google-gemini
         annotations:
           summary: "Gemini API experiencing high failure rate"
           description: "Gemini API failure rate is {{ $value | humanizePercentage }}"
@@ -43,33 +43,33 @@ groups:
         for: 10m
         labels:
           severity: warning
-          service: voiceai
+          service: at-google-gemini
         annotations:
           summary: "95th percentile call duration exceeds 2 minutes"
           description: "95th percentile call duration is {{ $value }}s"
 
       # Service down
       - alert: ServiceDown
-        expr: up{job="voiceai"} == 0
+        expr: up{job="at-google-gemini"} == 0
         for: 1m
         labels:
           severity: critical
-          service: voiceai
+          service: at-google-gemini
         annotations:
-          summary: "VoiceAI service is down"
-          description: "VoiceAI service has been down for more than 1 minute"
+          summary: "at-google-gemini service is down"
+          description: "at-google-gemini service has been down for more than 1 minute"
 
       # High memory usage
       - alert: HighMemoryUsage
         expr: |
           (
-            process_resident_memory_bytes{job="voiceai"} /
-            process_virtual_memory_max_bytes{job="voiceai"}
+            process_resident_memory_bytes{job="at-google-gemini"} /
+            process_virtual_memory_max_bytes{job="at-google-gemini"}
           ) > 0.9
         for: 5m
         labels:
           severity: warning
-          service: voiceai
+          service: at-google-gemini
         annotations:
           summary: "High memory usage detected"
           description: "Memory usage is at {{ $value | humanizePercentage }}"
@@ -80,7 +80,7 @@ groups:
         for: 5m
         labels:
           severity: warning
-          service: voiceai
+          service: at-google-gemini
         annotations:
           summary: "High number of active calls"
           description: "{{ $value }} active calls detected"
@@ -94,7 +94,7 @@ groups:
         for: 10m
         labels:
           severity: warning
-          service: voiceai
+          service: at-google-gemini
         annotations:
           summary: "SMS processing is slow"
           description: "95th percentile SMS processing time is {{ $value }}s"
@@ -108,7 +108,7 @@ groups:
         for: 5m
         labels:
           severity: warning
-          service: voiceai
+          service: at-google-gemini
         annotations:
           summary: "High Gemini API latency"
           description: "95th percentile Gemini API latency is {{ $value }}s"

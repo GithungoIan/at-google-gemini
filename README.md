@@ -2221,7 +2221,7 @@ FROM eclipse-temurin:17-jre-jammy
 WORKDIR /app
 
 # Copy JAR from builder
-COPY --from=builder /app/target/scala-*/voiceai-assembly-*.jar app.jar
+COPY --from=builder /app/target/scala-*/at-google-gemini-assembly-*.jar app.jar
 
 # Cloud Run expects port 8080
 ENV PORT=8080
@@ -2285,7 +2285,7 @@ lazy val root = (project in file("."))
 set -e
 
 PROJECT_ID="your-gcp-project-id"
-SERVICE_NAME="voiceai-service"
+SERVICE_NAME="at-google-gemini-service"
 REGION="us-central1"
 
 echo "Building Docker image..."
@@ -2321,7 +2321,7 @@ echo "Deployment complete!"
 apiVersion: serving.knative.dev/v1
 kind: Service
 metadata:
-  name: voiceai-service
+  name: at-google-gemini-service
 spec:
   template:
     metadata:
@@ -2335,7 +2335,7 @@ spec:
         autoscaling.knative.dev/target-utilization-percentage: "70"
     spec:
       containers:
-      - image: gcr.io/PROJECT/voiceai-service
+      - image: gcr.io/PROJECT/at-google-gemini-service
         resources:
           limits:
             cpu: "2000m"
@@ -2449,7 +2449,7 @@ on:
 
 env:
   PROJECT_ID: your-gcp-project-id
-  SERVICE_NAME: voiceai-service
+  SERVICE_NAME: at-google-gemini-service
   REGION: us-central1
 
 jobs:
@@ -2530,7 +2530,7 @@ import spray.json._
 
 object StructuredLogger {
 
-  private val logger = LoggerFactory.getLogger("VoiceAI")
+  private val logger = LoggerFactory.getLogger("at-google-gemini")
 
   case class LogEntry(
                        timestamp: String,
@@ -2550,7 +2550,7 @@ object StructuredLogger {
     val entry = LogEntry(
       timestamp = java.time.Instant.now().toString,
       level = "INFO",
-      service = "voiceai",
+      service = "at-google-gemini",
       event = event,
       metadata = metadata
     )
@@ -2561,7 +2561,7 @@ object StructuredLogger {
     val entry = LogEntry(
       timestamp = java.time.Instant.now().toString,
       level = "ERROR",
-      service = "voiceai",
+      service = "at-google-gemini",
       event = event,
       error = Some(error.getMessage),
       metadata = metadata
@@ -2822,7 +2822,7 @@ class HealthRoutes {
 ```json
 {
   "dashboard": {
-    "title": "VoiceAI Monitoring",
+    "title": "at-google-gemini Monitoring",
     "panels": [
       {
         "title": "Active Calls",
@@ -2864,7 +2864,7 @@ class HealthRoutes {
 ```yaml
 # prometheus-alerts.yml
 groups:
-  - name: voiceai
+  - name: at-google-gemini
     interval: 30s
     rules:
       - alert: HighErrorRate
@@ -2900,12 +2900,12 @@ groups:
           summary: "95th percentile call duration exceeds 2 minutes"
 
       - alert: ServiceDown
-        expr: up{job="voiceai"} == 0
+        expr: up{job="at-google-gemini"} == 0
         for: 1m
         labels:
           severity: critical
         annotations:
-          summary: "VoiceAI service is down"
+          summary: "at-google-gemini service is down"
 ```
 
 ## 7.6 Production Checklist

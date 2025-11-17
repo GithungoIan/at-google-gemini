@@ -91,7 +91,7 @@ class ApiVersioning(
           StatusCodes.OK,
           s"""
              |{
-             |  "service": "VoiceAI",
+             |  "service": "at-google-gemini",
              |  "version": "1.0.0",
              |  "status": "operational",
              |  "api_versions": {

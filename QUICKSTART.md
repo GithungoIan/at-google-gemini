@@ -63,7 +63,7 @@ sbt run
 
 You should see:
 ```
-VoiceAI service started at http://0.0.0.0:8080/
+at-google-gemini service started at http://0.0.0.0:8080/
 Webhook endpoint: http://0.0.0.0:8080/webhooks/voice/events
 Health check: http://0.0.0.0:8080/admin/health
 ```

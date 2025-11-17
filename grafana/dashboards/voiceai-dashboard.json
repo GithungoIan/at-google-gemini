@@ -1,7 +1,7 @@
 {
   "dashboard": {
-    "title": "VoiceAI Monitoring",
-    "uid": "voiceai-main",
+    "title": "at-google-gemini Monitoring",
+    "uid": "at-google-gemini-main",
     "version": 1,
     "timezone": "browser",
     "schemaVersion": 16,
@@ -109,7 +109,7 @@
         "type": "graph",
         "gridPos": {"h": 8, "w": 12, "x": 12, "y": 24},
         "targets": [{
-          "expr": "process_resident_memory_bytes{job=\"voiceai\"}",
+          "expr": "process_resident_memory_bytes{job=\"at-google-gemini\"}",
           "legendFormat": "Memory (bytes)",
           "refId": "A"
         }]

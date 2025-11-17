@@ -2,7 +2,7 @@
 
 ## Overview
 
-VoiceAI implements **URL-based versioning** as the primary versioning strategy. This document explains our versioning approach, migration strategies, and best practices.
+at-google-gemini implements **URL-based versioning** as the primary versioning strategy. This document explains our versioning approach, migration strategies, and best practices.
 
 ## Why API Versioning?
 

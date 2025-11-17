@@ -1,14 +1,14 @@
 #!/bin/bash
-# deploy.sh - Deploy VoiceAI to Google Cloud Run
+# deploy.sh - Deploy at-google-gemini to Google Cloud Run
 
 set -e
 
 PROJECT_ID="${GCP_PROJECT_ID:-your-gcp-project-id}"
-SERVICE_NAME="${SERVICE_NAME:-voiceai-service}"
+SERVICE_NAME="${SERVICE_NAME:-at-google-gemini-service}"
 REGION="${GCP_REGION:-us-central1}"
 
 echo "======================================"
-echo "Deploying VoiceAI to Google Cloud Run"
+echo "Deploying at-google-gemini to Google Cloud Run"
 echo "======================================"
 echo ""
 echo "Project ID: $PROJECT_ID"

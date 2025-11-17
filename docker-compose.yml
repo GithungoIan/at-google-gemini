@@ -1,8 +1,8 @@
 version: '3.8'
 
 services:
-  # VoiceAI Application
-  voiceai:
+  # at-google-gemini Application
+  at-google-gemini:
     build:
       context: .
       dockerfile: Dockerfile
@@ -19,7 +19,7 @@ services:
       - prometheus
       - grafana
     networks:
-      - voiceai-network
+      - at-google-gemini-network
     restart: unless-stopped
 
   # Prometheus for metrics
@@ -37,7 +37,7 @@ services:
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
     networks:
-      - voiceai-network
+      - at-google-gemini-network
     restart: unless-stopped
 
   # Grafana for visualization
@@ -56,7 +56,7 @@ services:
     depends_on:
       - prometheus
     networks:
-      - voiceai-network
+      - at-google-gemini-network
     restart: unless-stopped
 
   # Node Exporter for system metrics (optional)
@@ -69,11 +69,11 @@ services:
     volumes:
       - '/:/host:ro,rslave'
     networks:
-      - voiceai-network
+      - at-google-gemini-network
     restart: unless-stopped
 
 networks:
-  voiceai-network:
+  at-google-gemini-network:
     driver: bridge
 
 volumes:

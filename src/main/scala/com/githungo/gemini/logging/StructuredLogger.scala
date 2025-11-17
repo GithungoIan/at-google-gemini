@@ -7,7 +7,7 @@ import DefaultJsonProtocol._
 
 object StructuredLogger {
 
-  private val logger = LoggerFactory.getLogger("VoiceAI")
+  private val logger = LoggerFactory.getLogger("at-google-gemini")
 
   case class LogEntry(
     timestamp: String,
@@ -27,7 +27,7 @@ object StructuredLogger {
     val entry = LogEntry(
       timestamp = java.time.Instant.now().toString,
       level = "INFO",
-      service = "voiceai",
+      service = "at-google-gemini",
       event = event,
       metadata = metadata
     )
@@ -41,7 +41,7 @@ object StructuredLogger {
     val entry = LogEntry(
       timestamp = java.time.Instant.now().toString,
       level = "WARN",
-      service = "voiceai",
+      service = "at-google-gemini",
       event = event,
       metadata = metadata
     )
@@ -56,7 +56,7 @@ object StructuredLogger {
     val entry = LogEntry(
       timestamp = java.time.Instant.now().toString,
       level = "ERROR",
-      service = "voiceai",
+      service = "at-google-gemini",
       event = event,
       error = Some(error.getMessage),
       metadata = metadata

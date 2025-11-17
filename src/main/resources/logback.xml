@@ -17,10 +17,10 @@
 
     <!-- File appender -->
     <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/voiceai.log</file>
+        <file>logs/at-google-gemini.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
             <!-- Daily rollover -->
-            <fileNamePattern>logs/voiceai.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/at-google-gemini.%d{yyyy-MM-dd}.log</fileNamePattern>
 
             <!-- Keep 30 days' worth of history -->
             <maxHistory>30</maxHistory>
@@ -36,13 +36,13 @@
 
     <!-- Error file appender -->
     <appender name="ERROR_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-        <file>logs/voiceai-error.log</file>
+        <file>logs/at-google-gemini-error.log</file>
         <filter class="ch.qos.logback.classic.filter.ThresholdFilter">
             <level>ERROR</level>
         </filter>
 
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>logs/voiceai-error.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <fileNamePattern>logs/at-google-gemini-error.%d{yyyy-MM-dd}.log</fileNamePattern>
             <maxHistory>30</maxHistory>
         </rollingPolicy>
 
